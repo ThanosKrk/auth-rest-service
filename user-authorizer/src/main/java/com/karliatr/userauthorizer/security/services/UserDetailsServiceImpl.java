@@ -1,6 +1,5 @@
 package com.karliatr.userauthorizer.security.services;
 
-import com.bezkoder.springjwt.security.services.UserDetailsImpl;
 import com.karliatr.userauthorizer.models.User;
 import com.karliatr.userauthorizer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

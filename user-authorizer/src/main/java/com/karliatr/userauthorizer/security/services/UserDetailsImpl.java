@@ -1,4 +1,4 @@
-package com.bezkoder.springjwt.security.services;
+package com.karliatr.userauthorizer.security.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.karliatr.userauthorizer.models.User;
@@ -20,17 +20,20 @@ public class UserDetailsImpl implements UserDetails {
 
     private final String email;
 
+    private final String employmentStatus;
+
     @JsonIgnore
     private final String password;
 
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password,
+    public UserDetailsImpl(Long id, String username, String email, String employmentStatus, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.employmentStatus = employmentStatus;
         this.authorities = authorities;
     }
 
@@ -43,6 +46,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
+                user.getEmploymentStatus(),
                 user.getPassword(),
                 authorities);
     }
@@ -98,5 +102,9 @@ public class UserDetailsImpl implements UserDetails {
             return false;
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
+    }
+
+    public String getEmploymentStatus() {
+        return employmentStatus;
     }
 }

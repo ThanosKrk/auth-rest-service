@@ -1,6 +1,6 @@
 package com.karliatr.userauthorizer.security.jwt;
 
-import com.bezkoder.springjwt.security.services.UserDetailsImpl;
+import com.karliatr.userauthorizer.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

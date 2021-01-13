@@ -1,6 +1,6 @@
 package com.karliatr.userauthorizer.controllers;
 
-import com.bezkoder.springjwt.security.services.UserDetailsImpl;
+import com.karliatr.userauthorizer.security.services.UserDetailsImpl;
 import com.karliatr.userauthorizer.models.ERole;
 import com.karliatr.userauthorizer.models.Role;
 import com.karliatr.userauthorizer.models.User;
@@ -66,6 +66,7 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
+                userDetails.getEmploymentStatus(),
                 roles));
     }
 
