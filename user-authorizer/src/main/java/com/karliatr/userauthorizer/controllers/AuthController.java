@@ -6,6 +6,7 @@ import com.karliatr.userauthorizer.models.Role;
 import com.karliatr.userauthorizer.models.User;
 import com.karliatr.userauthorizer.payloads.request.LoginRequest;
 import com.karliatr.userauthorizer.payloads.request.SignupRequest;
+import com.karliatr.userauthorizer.payloads.request.UpdateUserRequest;
 import com.karliatr.userauthorizer.payloads.response.JwtResponse;
 import com.karliatr.userauthorizer.payloads.response.MessageResponse;
 import com.karliatr.userauthorizer.repository.RoleRepository;
@@ -13,6 +14,7 @@ import com.karliatr.userauthorizer.repository.UserRepository;
 import com.karliatr.userauthorizer.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,6 +69,46 @@ public class AuthController {
                 roles));
     }
 
+    @PostMapping("/updateUser")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserRequest newUsernameRequest) {
+        Optional<User> updatedUser = userRepository.getUserById(newUsernameRequest.getId());
+
+        if (!updatedUser.isPresent()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: User for update not found!"));
+        }
+
+        if (userRepository.existsByUsername(newUsernameRequest.getUsername())) {
+            System.out.printf("\n%s\n", newUsernameRequest.getUsername());
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: New username already in use!"));
+        }
+
+        if (userRepository.existsByEmail(newUsernameRequest.getEmail())) {
+            System.out.printf("\n%s\n", newUsernameRequest.getEmail());
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: New email already in use!"));
+        }
+
+        if (newUsernameRequest.getUsername() != null) {
+            System.out.println("Updating username!\n");
+            updatedUser.get().setUsername(newUsernameRequest.getUsername());
+        }
+
+        if (newUsernameRequest.getEmail() != null) {
+            System.out.println("Updating email!\n");
+            updatedUser.get().setEmail(newUsernameRequest.getEmail());
+        }
+
+        userRepository.save(updatedUser.get());
+
+        return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -80,9 +123,16 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
+        if (!signUpRequest.getEmploymentStatus().equals("employer") && !signUpRequest.getEmploymentStatus().equals("employee")) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Employment status should be either employee or employer!"));
+        }
+
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
+                signUpRequest.getEmploymentStatus(),
                 encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();

@@ -2,6 +2,7 @@ package com.karliatr.userauthorizer.payloads.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
@@ -15,6 +16,10 @@ public class SignupRequest {
     @Email
     private String email;
 
+    @NotEmpty
+    private String employmentStatus;
+
+    @NotBlank
     private Set<String> role;
 
     @NotBlank
@@ -51,5 +56,13 @@ public class SignupRequest {
 
     public void setRole(Set<String> role) {
         this.role = role;
+    }
+
+    public String getEmploymentStatus() {
+        return employmentStatus;
+    }
+
+    public void setEmploymentStatus(String employmentStatus) {
+        this.employmentStatus = employmentStatus;
     }
 }
