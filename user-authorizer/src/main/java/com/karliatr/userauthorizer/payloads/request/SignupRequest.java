@@ -23,6 +23,10 @@ public class SignupRequest {
     private Set<String> role;
 
     @NotBlank
+    @Size(max = 20)
+    private String phoneNumber;
+
+    @NotBlank
     @Size(min = 6, max = 40)
     private String password;
 
@@ -64,5 +68,13 @@ public class SignupRequest {
 
     public void setEmploymentStatus(String employmentStatus) {
         this.employmentStatus = employmentStatus;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

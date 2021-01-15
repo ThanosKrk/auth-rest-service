@@ -32,6 +32,10 @@ public class User {
     private String password;
 
     @NotBlank
+    @Size(max = 20)
+    private String phoneNumber;
+
+    @NotBlank
     @Size(max = 50)
     private String employmentStatus;
 
@@ -44,7 +48,7 @@ public class User {
     protected User() {
     }
 
-    public User(String username, String email, String employmentStatus, String password) {
+    public User(String username, String email, String employmentStatus, String password, String phoneNumber) {
         this.username = username;
         this.email = email;
         this.employmentStatus = employmentStatus;
@@ -97,5 +101,13 @@ public class User {
 
     public void setEmploymentStatus(String employmentStatus) {
         this.employmentStatus = employmentStatus;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

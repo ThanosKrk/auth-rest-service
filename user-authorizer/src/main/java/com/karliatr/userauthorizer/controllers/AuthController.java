@@ -1,6 +1,5 @@
 package com.karliatr.userauthorizer.controllers;
 
-import com.karliatr.userauthorizer.security.services.UserDetailsImpl;
 import com.karliatr.userauthorizer.models.ERole;
 import com.karliatr.userauthorizer.models.Role;
 import com.karliatr.userauthorizer.models.User;
@@ -12,6 +11,7 @@ import com.karliatr.userauthorizer.payloads.response.MessageResponse;
 import com.karliatr.userauthorizer.repository.RoleRepository;
 import com.karliatr.userauthorizer.repository.UserRepository;
 import com.karliatr.userauthorizer.security.jwt.JwtUtils;
+import com.karliatr.userauthorizer.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,6 +51,8 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -81,28 +83,30 @@ public class AuthController {
                     .body(new MessageResponse("Error: User for update not found!"));
         }
 
-        if (userRepository.existsByUsername(newUsernameRequest.getUsername())) {
-            System.out.printf("\n%s\n", newUsernameRequest.getUsername());
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: New username already in use!"));
-        }
-
-        if (userRepository.existsByEmail(newUsernameRequest.getEmail())) {
+        //Check if new email exists!
+        if (!newUsernameRequest.getEmail().equals(updatedUser.get().getEmail()) && userRepository.existsByEmail(newUsernameRequest.getEmail())) {
             System.out.printf("\n%s\n", newUsernameRequest.getEmail());
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: New email already in use!"));
         }
 
-        if (newUsernameRequest.getUsername() != null) {
-            System.out.println("Updating username!\n");
-            updatedUser.get().setUsername(newUsernameRequest.getUsername());
+        if (newUsernameRequest.getEmail().isEmpty()) {  // || newUsernameRequest.getPhoneNumber().isEmpty()
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: No empty values allowed in fields!"));
         }
 
-        if (newUsernameRequest.getEmail() != null) {
+        // Check if new email field is filled with new email
+        if (newUsernameRequest.getEmail() != "" && newUsernameRequest.getEmail() != updatedUser.get().getEmail()) {
             System.out.println("Updating email!\n");
             updatedUser.get().setEmail(newUsernameRequest.getEmail());
+        }
+
+        // Check if new phone-number field is filled with new phone-number
+        if (newUsernameRequest.getPhoneNumber() != "" && newUsernameRequest.getPhoneNumber() != updatedUser.get().getPhoneNumber()) {
+            System.out.println("Updating email!\n");
+            updatedUser.get().setPhoneNumber(newUsernameRequest.getPhoneNumber());
         }
 
         userRepository.save(updatedUser.get());
@@ -134,7 +138,8 @@ public class AuthController {
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 signUpRequest.getEmploymentStatus(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getPhoneNumber());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
