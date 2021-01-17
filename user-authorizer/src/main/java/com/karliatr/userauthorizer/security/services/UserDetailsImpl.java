@@ -18,22 +18,34 @@ public class UserDetailsImpl implements UserDetails {
 
     private final String username;
 
+    private final String firstName;
+
+    private final String lastName;
+
+    private final String afm;
+
     private final String email;
 
     private final String employmentStatus;
+
+    private final String phoneNumber;
 
     @JsonIgnore
     private final String password;
 
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String employmentStatus, String password,
+    public UserDetailsImpl(Long id, String username, String firstName, String lastName, String afm, String email, String employmentStatus, String phoneNumber, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.afm = afm;
         this.email = email;
         this.password = password;
         this.employmentStatus = employmentStatus;
+        this.phoneNumber = phoneNumber;
         this.authorities = authorities;
     }
 
@@ -45,8 +57,12 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getAfm(),
                 user.getEmail(),
                 user.getEmploymentStatus(),
+                user.getPhoneNumber(),
                 user.getPassword(),
                 authorities);
     }
@@ -72,6 +88,22 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getAfm() {
+        return afm;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     @Override

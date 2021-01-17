@@ -12,6 +12,18 @@ public class SignupRequest {
     private String username;
 
     @NotBlank
+    @Size(max = 20)
+    private String firstName;
+
+    @NotBlank
+    @Size(max = 20)
+    private String lastName;
+
+    @NotBlank
+    @Size(max = 20)
+    private String afm;
+
+    @NotBlank
     @Size(max = 50)
     @Email
     private String email;
@@ -76,5 +88,29 @@ public class SignupRequest {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAfm() {
+        return afm;
+    }
+
+    public void setAfm(String afm) {
+        this.afm = afm;
     }
 }

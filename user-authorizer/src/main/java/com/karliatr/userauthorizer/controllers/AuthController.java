@@ -51,8 +51,6 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -67,14 +65,19 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
+                userDetails.getFirstName(),
+                userDetails.getLastName(),
+                userDetails.getAfm(),
                 userDetails.getEmail(),
                 userDetails.getEmploymentStatus(),
+                userDetails.getPhoneNumber(),
                 roles));
     }
 
     @PostMapping("/updateUser")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserRequest newUsernameRequest) {
+        //System.out.printf("IN update user function!\n");
         Optional<User> updatedUser = userRepository.getUserById(newUsernameRequest.getId());
 
         if (!updatedUser.isPresent()) {
@@ -91,7 +94,7 @@ public class AuthController {
                     .body(new MessageResponse("Error: New email already in use!"));
         }
 
-        if (newUsernameRequest.getEmail().isEmpty()) {  // || newUsernameRequest.getPhoneNumber().isEmpty()
+        if (newUsernameRequest.getEmail().isEmpty() || newUsernameRequest.getPhoneNumber().isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: No empty values allowed in fields!"));
@@ -105,7 +108,7 @@ public class AuthController {
 
         // Check if new phone-number field is filled with new phone-number
         if (newUsernameRequest.getPhoneNumber() != "" && newUsernameRequest.getPhoneNumber() != updatedUser.get().getPhoneNumber()) {
-            System.out.println("Updating email!\n");
+            System.out.println("Updating phoneNumber!\n");
             updatedUser.get().setPhoneNumber(newUsernameRequest.getPhoneNumber());
         }
 
@@ -128,6 +131,12 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
+        if (userRepository.existsByAfm(signUpRequest.getAfm())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: AFM is already in use!"));
+        }
+
         if (!signUpRequest.getEmploymentStatus().equals("employer") && !signUpRequest.getEmploymentStatus().equals("employee")) {
             return ResponseEntity
                     .badRequest()
@@ -136,10 +145,13 @@ public class AuthController {
 
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getFirstName(),
+                signUpRequest.getLastName(),
+                signUpRequest.getAfm(),
                 signUpRequest.getEmail(),
                 signUpRequest.getEmploymentStatus(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getPhoneNumber());
+                signUpRequest.getPhoneNumber(),
+                encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();

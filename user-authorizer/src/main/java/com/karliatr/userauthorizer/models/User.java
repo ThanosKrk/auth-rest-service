@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "afm"),
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
@@ -21,6 +22,18 @@ public class User {
     @NotBlank
     @Size(max = 20)
     private String username;
+
+    @NotBlank
+    @Size(max = 20)
+    private String firstName;
+
+    @NotBlank
+    @Size(max = 20)
+    private String lastName;
+
+    @NotBlank
+    @Size(max = 20)
+    private String afm;
 
     @NotBlank
     @Size(max = 50)
@@ -48,10 +61,14 @@ public class User {
     protected User() {
     }
 
-    public User(String username, String email, String employmentStatus, String password, String phoneNumber) {
+    public User(String username, String firstName, String lastName, String afm, String email, String employmentStatus, String phoneNumber, String password) {
         this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.afm = afm;
         this.email = email;
         this.employmentStatus = employmentStatus;
+        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
@@ -109,5 +126,29 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAfm() {
+        return afm;
+    }
+
+    public void setAfm(String afm) {
+        this.afm = afm;
     }
 }
