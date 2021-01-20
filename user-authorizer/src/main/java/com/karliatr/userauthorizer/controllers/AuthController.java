@@ -83,7 +83,7 @@ public class AuthController {
         if (!updatedUser.isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: User for update not found!"));
+                    .body(new MessageResponse("Δεν βρέθηκε ο συγκεκριμένος χρήστης για να ενημερωθεί!"));
         }
 
         //Check if new email exists!
@@ -91,13 +91,13 @@ public class AuthController {
             System.out.printf("\n%s\n", newUsernameRequest.getEmail());
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: New email already in use!"));
+                    .body(new MessageResponse("Το συγκεκριμένο email χρησιμοποιείται!"));
         }
 
         if (newUsernameRequest.getEmail().isEmpty() || newUsernameRequest.getPhoneNumber().isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: No empty values allowed in fields!"));
+                    .body(new MessageResponse("Κενά πεδία, μη επιτρεπτά!"));
         }
 
         // Check if new email field is filled with new email
@@ -114,7 +114,7 @@ public class AuthController {
 
         userRepository.save(updatedUser.get());
 
-        return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Ο χρήστης ενημερώθηκε με επιτυχία!"));
     }
 
     @PostMapping("/signup")
@@ -122,25 +122,25 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Το συγκεκριμένο όνομα χρήστη χρησιμοπειείται ήδη!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("Η συγκεκριμένη διεύθυνση email χρησιμοπειείται ήδη!"));
         }
 
         if (userRepository.existsByAfm(signUpRequest.getAfm())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: AFM is already in use!"));
+                    .body(new MessageResponse("Το συγκεκριμένο ΑΦΜ χρησιμοπειείται ήδη!"));
         }
 
         if (!signUpRequest.getEmploymentStatus().equals("employer") && !signUpRequest.getEmploymentStatus().equals("employee")) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Employment status should be either employee or employer!"));
+                    .body(new MessageResponse("Επιλογή ρόλου αποκλειστικά μεταξύ εργαζόμενου και εργοδότη!"));
         }
 
         // Create new user's account
@@ -186,6 +186,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Ο χρήστης δημιουργήθηκε με επιτυχία!"));
     }
 }
